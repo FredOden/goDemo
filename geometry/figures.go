@@ -23,5 +23,5 @@ func (p *Point) SetZ(z float64) { p.z = z;}; func(p *Point) GetZ() float64 { ret
 
 func (from *Point) To(to *Point) *Vector { var v Vector; v.Create(to.x - from.x, to.y - from.y, to.z - from.z); return &v;};
 
-func (p *Point) Translate(v *Vector) { p.x += v.u; p.y += v.v; p.z +=v.w }
+func (p *Point) Translate(v *Vector) *Point { var t Point; t.Copy(p); t.x += v.u; t.y += v.v; t.z +=v.w; return &t; }
 
