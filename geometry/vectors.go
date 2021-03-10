@@ -2,30 +2,22 @@ package geometry
 
 import "math"
 
-type Vector struct {
-	u,v,w float64
-};
+type AVector [3]float64;
 
+const U = 0;
+const V = 1;
+const W = 2;
 
-func (vector *Vector) Create(u,v,w float64) {
-	vector.u = u;
-	vector.v = v;
-	vector.w = w;
-}
-
-func (vector *Vector) Length() float64 {
+func (vector *AVector) Length() float64 {
 	return math.Sqrt(vector.ScalarProduct(vector));
 }
 
-func (vector *Vector) ScalarProduct(v *Vector) float64 {
-	return vector.u*v.u + vector.v*v.v + vector.w*v.w;
+func (u *AVector) ScalarProduct(v *AVector) float64 {
+	return u[U]*v[U] + u[V]*v[V] + u[W]*v[W];
 }
 
-func (u *Vector) VectorialProduct(v *Vector) *Vector {
-	var pv Vector;
-	pv.Create( u.v*v.w - u.w*v.v,
-		u.w*v.u - u.u*v.w,
-		u.u*v.v - u.v*v.u,
-	);
+func (u *AVector) VectorialProduct(v *AVector) *AVector {
+	pv := AVector{  u[V]*v[W] - u[W]*v[V], u[W]*v[U] - u[U]*v[W], u[U]*v[V] - u[V]*v[U] };
 	return &pv;
 }
+

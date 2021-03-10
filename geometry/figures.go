@@ -1,27 +1,11 @@
 package geometry
 
 
-type Point struct {
-	x,y,z float64;
-};
+type APoint [3]float64;
+const X = 0;
+const Y = 1;
+const Z = 2;
 
-func (p *Point) Create(x,y,z float64) {
-	p.x = x;
-	p.y = y;
-	p.z = z;
-}
+func (from *APoint) To(to *APoint) *AVector { v := AVector{to[X] - from[X], to[Y] - from[Y], to[Z] - from[Z]}; return &v; };
 
-func (p *Point) Copy(from *Point) {
-	p.x = from.x;
-	p.y = from.z;
-	p.z = from.z;
-}
-
-func (p *Point) SetX(x float64) { p.x = x;}; func(p *Point) GetX() float64 { return p.x };
-func (p *Point) SetY(y float64) { p.y = y;}; func(p *Point) GetY() float64 { return p.y };
-func (p *Point) SetZ(z float64) { p.z = z;}; func(p *Point) GetZ() float64 { return p.z };
-
-func (from *Point) To(to *Point) *Vector { var v Vector; v.Create(to.x - from.x, to.y - from.y, to.z - from.z); return &v;};
-
-func (p *Point) Translate(v *Vector) *Point { var t Point; t.Copy(p); t.x += v.u; t.y += v.v; t.z +=v.w; return &t; }
-
+func (p *APoint) Translate(v *AVector) *APoint { t := APoint{p[X] + v[U], p[Y] + v[V], p[Z] +v[W]}; return &t; }
