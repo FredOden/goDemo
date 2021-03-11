@@ -26,7 +26,16 @@ func (m *AMatrix) MatrixProduct (p *AMatrix) *AMatrix {
 	return r;
 }
 
-func (m *AMatrix) Transform(v *AVector) *AVector {
+func (m *AMatrix) TransformAPoint(v *APoint) *APoint {
+	r := &APoint {
+		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
+		m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
+		m[6]*v[0] + m[7]*v[1] + m[8]*v[2],
+	};
+	return r;
+}
+
+func (m *AMatrix) TransformAVector(v *AVector) *AVector {
 	r := &AVector {
 		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
 		m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
