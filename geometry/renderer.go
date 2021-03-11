@@ -90,7 +90,7 @@ func (screen *Screen) spotXY(x, y int, s string, color *AColor) {
 	var r,g,b byte;
 	r=127;g=127;b=127;
 	if (color != nil) {
-             r = color[R]; g = color[G]; b = color[B];
+		r = color[R]; g = color[G]; b = color[B];
 	}
 	screen.Buffer += fmt.Sprintf("%s[%d;%dH%s[38;2;%d;%d;%dm%s%s[0m", ESC, y, x, ESC, r, g, b, s, ESC);
 }

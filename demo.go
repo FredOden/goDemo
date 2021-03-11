@@ -6,10 +6,12 @@ import (
 	"lourah.com/oops/demo/geometry"
 	"math"
 	"time"
+	"runtime"
 );
 
 
 func main() {
+	runtime.MemProfileRate = 0;
 	fmt.Printf("demo::Rendering::Begin\n");
 
 	shape := geometry.NewShape();
@@ -23,7 +25,7 @@ func main() {
 	blue := geometry.RGB([3]byte{0, 127, 127});
 
 	renderer := geometry.NewRenderer(160, 50, &geometry.APoint{30, 30, 100});
-	
+
 	for i:=0; i<360; i++ {
 		angle := geometry.ToRadian(float64(i)/1);
 		shape = geometry.Append(shape, &geometry.APoint{15*math.Cos(3*angle), 15*math.Sin(2*angle), 15*math.Sin(angle)}, red);
@@ -36,7 +38,10 @@ func main() {
 		yAxis = geometry.Append(yAxis, &geometry.APoint{0,f,0}, green);
 		zAxis = geometry.Append(zAxis, &geometry.APoint{0,0,f}, green);
 	}
-	
+
+
+	defer func () { fmt.Println("Defered 1::", len(shape)); }();
+
 	renderer.Render(xAxis);
 	renderer.Render(yAxis);
 	renderer.Render(zAxis);
