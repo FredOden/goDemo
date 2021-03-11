@@ -1,6 +1,9 @@
 package geometry
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Pixel struct {
 	p3d *APoint
@@ -75,31 +78,40 @@ func (renderer *Renderer) Rotate(shape []*Pixel, rX,rY,rZ float64) []*Pixel {
 	return shape;
 }
 
-func spotXY(x, y int, s string, color *AColor) {
+
+type Screen struct {
+	Buffer string;
+}
+
+func NewScreen() *Screen { s:= &Screen{Buffer: ""}; return s; }
+
+func (screen *Screen) spotXY(x, y int, s string, color *AColor) {
 	//fmt.Print(ESC,"[", x, ";", y, "H", s, ESC, "[38;2;", 0, 255, 0);
 	var r,g,b byte;
 	r=127;g=127;b=127;
 	if (color != nil) {
              r = color[R]; g = color[G]; b = color[B];
 	}
-	fmt.Printf("%s[%d;%dH%s[48;2;%d;%d;%dm%s%s[0m", ESC, y, x, ESC, r, g, b, s, ESC);
+	screen.Buffer += fmt.Sprintf("%s[%d;%dH%s[38;2;%d;%d;%dm%s%s[0m", ESC, y, x, ESC, r, g, b, s, ESC);
 }
 
 const ESC = "\x1b"
 
 func (renderer *Renderer) Draw() {
-	fmt.Printf("%s[2J", ESC);
+	screen := NewScreen();
+	screen.Buffer = fmt.Sprintf("%s[2J", ESC);
 	count := 0;
 	for i:= 0; i < len(renderer.zP); i++ {
 		if (renderer.zP[i] != nil) {
-			x := int(renderer.zP[i].p2d[X]);
-			y := int(renderer.zP[i].p2d[Y]);
-			spotXY(x, y, " ", renderer.zP[i].color);
+			x := int(math.Trunc(renderer.zP[i].p2d[X]));
+			y := int(math.Trunc(renderer.zP[i].p2d[Y]));
+			screen.spotXY(x, y, "\x1b[1mX", renderer.zP[i].color);
 			count++
 			renderer.zP[i] = nil;
 		}
 	}
-	//spotXY(0, 0, fmt.Sprintf("Drawn %d pixels", count), &AColor{255,255,10});
+	screen.spotXY(0, 0, fmt.Sprintf("Drawn %d pixels", count), &AColor{255,255,10});
+	fmt.Print(screen.Buffer);
 }
 
 func (renderer *Renderer) Translate(shape []*Pixel, vector *AVector) []*Pixel {

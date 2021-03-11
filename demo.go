@@ -19,15 +19,15 @@ func main() {
 	yAxis := geometry.NewShape();
 	zAxis := geometry.NewShape();
 	red := geometry.RGB([3]byte{255, 0, 0});
-	green := geometry.RGB([3]byte{0, 255, 0});
-	blue := geometry.RGB([3]byte{0, 0, 255});
+	green := geometry.RGB([3]byte{0, 192, 0});
+	blue := geometry.RGB([3]byte{0, 127, 127});
 
-	renderer := geometry.NewRenderer(120, 50, &geometry.APoint{20, 20, 100});
+	renderer := geometry.NewRenderer(160, 50, &geometry.APoint{30, 30, 100});
 	
 	for i:=0; i<360; i++ {
 		angle := geometry.ToRadian(float64(i)/1);
-		shape = geometry.Append(shape, &geometry.APoint{15*math.Cos(3*angle), 15*math.Sin(2*angle), 0}, red);
-		shape2 = geometry.Append(shape2, &geometry.APoint{15*math.Cos(3*angle), 3, 15*math.Sin(5*angle)}, blue);
+		shape = geometry.Append(shape, &geometry.APoint{15*math.Cos(3*angle), 15*math.Sin(2*angle), 15*math.Sin(angle)}, red);
+		shape2 = geometry.Append(shape2, &geometry.APoint{15*math.Cos(3*angle), 15*math.Sin(angle), 15*math.Sin(5*angle)}, blue);
 	}
 
 	for i:=-500; i<500; i++ {
@@ -55,7 +55,7 @@ func main() {
 		t = renderer.Rotate(shape2, geometry.ToRadian(3), geometry.ToRadian(5), geometry.ToRadian(4));
 		t = renderer.Translate(t, &geometry.AVector{0, 0, -float64(i)/720});
 		renderer.Render(t);
-		time.Sleep(50 * time.Millisecond);
+		if true { time.Sleep(100 * time.Millisecond); }
 	}
 	fmt.Printf("demo::End\n");
 };
