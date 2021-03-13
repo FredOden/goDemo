@@ -21,3 +21,6 @@ func (u *AVector) VectorialProduct(v *AVector) *AVector {
 	return &pv;
 }
 
+func (p *AVector) at(i int) float64{ return p[i]; }
+func (p *AVector) feed(i int, val float64) { p[i] = val; }
+

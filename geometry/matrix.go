@@ -1,6 +1,9 @@
 package geometry
 
-import "math"
+import (
+	"math"
+	"reflect"
+)
 
 type AMatrix [9]float64;
 
@@ -26,20 +29,24 @@ func (m *AMatrix) MatrixProduct (p *AMatrix) *AMatrix {
 	return r;
 }
 
-func (m *AMatrix) TransformAPoint(v *APoint) *APoint {
-	r := &APoint {
-		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
-		m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
-		m[6]*v[0] + m[7]*v[1] + m[8]*v[2],
-	};
-	return r;
-}
+// Transform will apply the m *AMatrix on a AColumn object
+// for example there are implementations of AColumn interface on
+// APoint and AVector type
+// for example to apply on a *APoint object and getting resukting APoint:
+// var pTo *APoint;
+// pTo = mr.Transform(pFrom).(*APoint);
+// seet .(*APoint) is a type assertion on AColumn
+//
+// Note that AColumn is substitued by *Type because implementing func (*Type) interfaceMember(...) ... { ... }
+//
+func (m *AMatrix) Transform(v AColumn) AColumn {
+	columnPtr := reflect.New(reflect.TypeOf(v).Elem());
+	k := columnPtr.Interface().(*APoint);
+	av := [3]float64{v.at(0), v.at(1), v.at(2)};
 
-func (m *AMatrix) TransformAVector(v *AVector) *AVector {
-	r := &AVector {
-		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
-		m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
-		m[6]*v[0] + m[7]*v[1] + m[8]*v[2],
-	};
-	return r;
+	k.feed(0, m[0]*av[0] + m[1]*av[1] + m[2]*av[2]);;
+	k.feed(1, m[3]*av[0] + m[4]*av[1] + m[5]*av[2]);;
+	k.feed(2, m[6]*av[0] + m[7]*av[1] + m[8]*av[2]);;
+
+	return k;
 }

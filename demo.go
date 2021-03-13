@@ -53,14 +53,14 @@ func main() {
 		renderer.Draw();
 		s = renderer.Rotate(shape, geometry.ToRadian(6), geometry.ToRadian(1), geometry.ToRadian(2));
 		s = renderer.Translate(s, &geometry.AVector{0, 0, float64(i)/720});
-		renderer.Render(xAxis);
-		renderer.Render(yAxis);
-		renderer.Render(zAxis);
 		renderer.Render(s);
 		t = renderer.Rotate(shape2, geometry.ToRadian(3), geometry.ToRadian(5), geometry.ToRadian(4));
 		t = renderer.Translate(t, &geometry.AVector{0, 0, -float64(i)/720});
 		renderer.Render(t);
-		if true { time.Sleep(100 * time.Millisecond); }
+		renderer.Render(xAxis);
+		renderer.Render(yAxis);
+		renderer.Render(zAxis);
+		if false { time.Sleep(100 * time.Millisecond); }
 	}
 	fmt.Printf("demo::End\n");
 };
