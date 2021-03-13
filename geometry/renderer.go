@@ -110,13 +110,11 @@ var screen *Screen = NewScreen();
 
 func (renderer *Renderer) Draw() {
 	screen.Clear();
-	count := 0;
 	for i:= 0; i < len(renderer.zP); i++ {
-		if (renderer.zP[i] != nil) {
+		if renderer.zP[i] != nil  && renderer.zP[i].projected {
 			x := int(math.Trunc(renderer.zP[i].p2d[X]));
 			y := int(math.Trunc(renderer.zP[i].p2d[Y]));
 			screen.spotXY(x, y, "\x1b[1mX", renderer.zP[i].color);
-			count++
 			renderer.zP[i] = nil;
 		}
 	}

@@ -16,7 +16,7 @@ func main() {
 
 	shape := geometry.NewShape();
 	shape2 := geometry.NewShape();
-	var s,t []*geometry.Pixel;
+	var t []*geometry.Pixel;
 	xAxis := geometry.NewShape();
 	yAxis := geometry.NewShape();
 	zAxis := geometry.NewShape();
@@ -45,15 +45,17 @@ func main() {
 	renderer.Render(xAxis);
 	renderer.Render(yAxis);
 	renderer.Render(zAxis);
-	s = shape;
-	renderer.Render(s);
+	renderer.Render(shape);
 	t = shape2;
 	renderer.Render(t);
 	for i:=0; i<360; i++ {
+		f := float64(i);
 		renderer.Draw();
-		s = renderer.Rotate(shape, geometry.ToRadian(6), geometry.ToRadian(1), geometry.ToRadian(2));
-		s = renderer.Translate(s, &geometry.AVector{0, 0, float64(i)/720});
-		renderer.Render(s);
+		renderer.Render(
+			renderer.Translate(
+				renderer.Rotate(
+					shape, geometry.ToRadian(f*.006), geometry.ToRadian(f*.001), geometry.ToRadian(f*.002)), &geometry.AVector{0, 0, float64(i)/720},
+			));
 		t = renderer.Rotate(shape2, geometry.ToRadian(3), geometry.ToRadian(5), geometry.ToRadian(4));
 		t = renderer.Translate(t, &geometry.AVector{0, 0, -float64(i)/720});
 		renderer.Render(t);
