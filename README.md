@@ -3,7 +3,7 @@
 A set of comprehensive examples to show how to program with go language
 
 Created on Wed Mar 10 00:10:36 CET 2021
-<h1>How to install go on your Raspberry PI</h!>
+<h1>How to install go on your Raspberry PI</h1>
 <ul>
 <li>check <a href="https:/golang.org/dl">for go lang archives</a>
 </li><li>download selected archive <b>go{V}.{R}.{m}.linux-<i>armv6l</i>.tar.gz</b> in a local directory
