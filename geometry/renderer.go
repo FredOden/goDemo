@@ -1,20 +1,20 @@
 package geometry
 
 import (
-	"fmt"
 	"math"
+	"lourah.com/oops/demo/screen"
 )
 
 type Pixel struct {
 	p3d *APoint    // The #rough 3d point coordinate
 	p2d *APoint    // The "projection" of 3d point through a Renderer
 	projected bool // to check if p3d was projected to avoid recomputation
-	color *AColor  // RGBA color of the pixel
+	color *screen.AColor  // RGBA color of the pixel
 }
 
 // NewPixel is the factory for a *Pixel element
 // ensure that projected field is set to false
-func NewPixel(p3d *APoint, color *AColor) *Pixel { p := &Pixel{p3d: p3d, color: color, projected: false}; return p; }
+func NewPixel(p3d *APoint, color *screen.AColor) *Pixel { p := &Pixel{p3d: p3d, color: color, projected: false}; return p; }
 
 type Renderer struct {
 	halfWidth float64      // cached computation of width/2
@@ -87,38 +87,17 @@ func (renderer *Renderer) Rotate(shape []*Pixel, rX,rY,rZ float64) []*Pixel {
 }
 
 
-type Screen struct {
-	Buffer string;
-}
-
-func NewScreen() *Screen { s:= &Screen{Buffer: ""}; return s; }
-
-func (screen *Screen) spotXY(x, y int, s string, color *AColor) {
-	var r,g,b byte;
-	r=127;g=127;b=127;
-	if (color != nil) {
-		r = color[R]; g = color[G]; b = color[B];
-	}
-	screen.Buffer += fmt.Sprintf("\x1b[%d;%dH\x1b[38;2;%d;%d;%dm%s\x1b[0m", y, x, r, g, b, s);
-}
-
-func (screen *Screen) Clear() {
-	screen.Buffer = "\x1b[2J";
-}
-
-var screen *Screen = NewScreen();
-
-func (renderer *Renderer) Draw() {
+func (renderer *Renderer) Draw(screen screen.Screen) {
 	screen.Clear();
 	for i:= 0; i < len(renderer.zP); i++ {
 		if renderer.zP[i] != nil  && renderer.zP[i].projected {
 			x := int(math.Trunc(renderer.zP[i].p2d[X]));
 			y := int(math.Trunc(renderer.zP[i].p2d[Y]));
-			screen.spotXY(x, y, "\x1b[1mX", renderer.zP[i].color);
+			screen.SpotXY(x, y, renderer.zP[i].color);
 			renderer.zP[i] = nil;
 		}
 	}
-	fmt.Print(screen.Buffer);
+	screen.Flush();
 }
 
 func (renderer *Renderer) Translate(shape []*Pixel, vector *AVector) []*Pixel {
@@ -130,7 +109,7 @@ func (renderer *Renderer) Translate(shape []*Pixel, vector *AVector) []*Pixel {
 
 func NewShape () []*Pixel { var ap []*Pixel; return ap; }
 
-func Append(shape []*Pixel, p3d *APoint, color *AColor) []*Pixel {
+func Append(shape []*Pixel, p3d *APoint, color *screen.AColor) []*Pixel {
 	p:=&Pixel{p3d:p3d, color:color, projected:false};
 	return append(shape, p);
 }

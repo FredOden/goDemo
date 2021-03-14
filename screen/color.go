@@ -1,4 +1,4 @@
-package geometry 
+package screen 
 
 type AColor [4]byte;
 
