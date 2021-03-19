@@ -11,7 +11,7 @@ import (
 	"runtime"
 );
 
-var   Entry *registry.Entry  = &registry.Entry{
+var   Demo3d *registry.Entry  = &registry.Entry{
 	Name:"Demo3d",
 	Summary:"A simple example showing how to use go language and interfaces",
 	Handler:func () {

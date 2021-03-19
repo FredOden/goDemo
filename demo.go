@@ -6,12 +6,14 @@ import (
 	"lourah.com/oops/demo/demos"
 	"lourah.com/oops/demo/registry"
 	"runtime/debug"
+	"reflect"
+	"strconv"
 );
 
 func main() {
 	menu  := registry.NewRegister();
 
-	menu.AddEntry(demos.Entry);;
+	menu.AddEntry(demos.Demo3d);;
 
 	fmt.Println("Demo.go::Start");
 	// Look at here, example of defer and recover feature
@@ -23,7 +25,24 @@ func main() {
 			// then exits normally from the enclosing function
 		}
 	}()
-	fmt.Println(menu["Demo3d"].Summary);
-	menu["Demo3d"].Handler();
-	fmt.Println("Demo.go::End");
+
+	keys := reflect.ValueOf(menu).MapKeys();
+	for {
+		for i :=  0; i < len(keys); i++ {
+			key := keys[i].String();
+			fmt.Printf("%d - [%-10.10s%100.100s]\n", i + 1, key, menu[key].Summary);
+		}
+		var sChoice string;
+		fmt.Print("Choice: ");
+		fmt.Scanf("%s", &sChoice);
+		if (sChoice == "q") { break; }
+		if k, err := strconv.Atoi(sChoice); err == nil {
+			k--;
+			if k >=0 && k < len(keys) {
+				menu[keys[k].String()].Handler();
+			} else {
+				continue;
+			}
+		}
+	}
 }

@@ -86,7 +86,8 @@ func (renderer *Renderer) Rotate(shape []*Pixel, rX,rY,rZ float64) []*Pixel {
 	return shape;
 }
 
-
+// Draw draw the full content of zP buffer of the renderer
+// then clears the content of zP
 func (renderer *Renderer) Draw(screen screen.Screen) {
 	screen.Clear();
 	for i:= 0; i < len(renderer.zP); i++ {
