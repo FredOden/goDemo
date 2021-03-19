@@ -1,8 +1,11 @@
 #include "angles.h"
 #include "renderer.h"
+#include "ansi.h"
 #include <iostream>
 
 int main(int argc, char **argv) {
+
+	Lourah::screen::Ansi ansi;
 
 	std::cout << "testRenderer::Starting" << std::endl;
 	Lourah::geometry::Shape s;
@@ -24,6 +27,10 @@ int main(int argc, char **argv) {
 			<< std::endl;
 
 	}
+	renderer.render(s);
+
+
+	renderer.draw(ansi);
 
 	
 }

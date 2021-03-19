@@ -4,6 +4,7 @@ func Append(shape []*Pixel, p3d *APoint, color *screen.AColor) []*Pixel {
 	return append(shape, p);
 }
 */
+#include <iostream>
 #include "matrix.h"
 #include "renderer.h"
 
@@ -67,17 +68,18 @@ Lourah::geometry::Shape& Lourah::geometry::Renderer::translate(Shape &shape, AVe
 
 // Draw draw the full content of zP buffer of the renderer
 // then clears the content of zP
-void Lourah::geometry::Renderer::draw(Lourah::screen::Screen screen) {
-	screen.Clear();
-	for (i:= 0; i < len(renderer.zP); i++) {
-		if renderer.zP[i] != nil  && renderer.zP[i].projected {
-			x := int(math.Trunc(renderer.zP[i].p2d[X]));
-			y := int(math.Trunc(renderer.zP[i].p2d[Y]));
-			screen.SpotXY(x, y, renderer.zP[i].color);
-			renderer.zP[i] = nil;
+void Lourah::geometry::Renderer::draw(Lourah::screen::Screen& screen) {
+	screen.clear();
+	for (int i = 0; i < length; i++) {
+		if (zP[i] != NULL  && zP[i]->projected) {
+			int x = int(zP[i]->p2d[Lourah::geometry::APoint::X]);
+			int y = int(zP[i]->p2d[Lourah::geometry::APoint::Y]);
+			std::cout << "x::" << x << "::y::" << y << std::endl;
+			screen.spotXY(x, y, zP[i]->color);
+			zP[i] = NULL;
 		}
 	}
-	screen.Flush();
+	//screen.flush();
 }
 
 

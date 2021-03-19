@@ -10,5 +10,5 @@ renderer.o:renderer.cpp renderer.h matrix.h angles.h vectors.h points.h column.h
 
 testMatrix:testMatrix.cpp matrix.h angles.h vectors.h points.h column.h ../screen/color.h
 	c++ ${CPPFLAGS} -o testMatrix $<
-testRenderer:testRenderer.cpp renderer.o matrix.h angles.h vectors.h points.h column.h renderer.h ../screen/color.h
-	c++ ${CPPFLAGS} -o testRenderer $< renderer.o
+testRenderer:testRenderer.cpp renderer.o ../screen/ansi.o matrix.h angles.h vectors.h points.h column.h renderer.h ../screen/color.h
+	c++ ${CPPFLAGS} -o testRenderer $< renderer.o ../screen/ansi.o

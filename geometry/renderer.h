@@ -48,16 +48,19 @@ namespace Lourah {
 				double height; // cached cast to float64 for further computation
 				APoint camera; // Where is the camera (fixing [0,0,0] point) a simple implementation
 				Pixel **zP;   // Zdepth pixels indexed by X2D%width + Y2D/width if p3d[Z] > existing pixel
+				int length;
 				void project(Pixel &); // projection according to the renderer class
 
 			public:
-				Renderer(int width, int height, APoint& camera) {
-					this->width = (double)width;
-					this->height = (double)height;
-					halfWidth = this->width/2;
-					halfHeight = this->height/2;
+				Renderer(int iWidth, int iHeight, APoint& camera) {
+					width = (double)iWidth;
+					height = (double)iHeight;
+					length = (iWidth + 1)*(iHeight + 1);
+					halfWidth = width/2;
+					halfHeight = height/2;
 					this->camera = camera;
-					zP = (Pixel **)malloc(sizeof(Pixel *)*(width + 1)*(height + 1));
+					zP = (Pixel **)malloc(sizeof(Pixel *)*length);
+					for(int i = 0; i < length; i++) zP[i] = NULL;
 				}
 				~Renderer() {
 					free(zP);
