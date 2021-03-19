@@ -2,6 +2,8 @@
 
 A set of comprehensive examples to show how to program with go language
 
+<p>The same demo is also written with c++ to investigate go/c++ advantages and disavantages
+
 Created on Wed Mar 10 00:10:36 CET 2021
 <h1>How to install go on your Raspberry PI</h1>
 <ul>
