@@ -5,6 +5,7 @@ func Append(shape []*Pixel, p3d *APoint, color *screen.AColor) []*Pixel {
 }
 */
 #include <iostream>
+#include <cmath>
 #include "matrix.h"
 #include "renderer.h"
 
@@ -32,14 +33,20 @@ void Lourah::geometry::Renderer::render(Lourah::geometry::Shape& shape) {
 		}
 		Lourah::geometry::APoint w = pixel.p2d;
 
+
 		if (
 				(w[Lourah::geometry::APoint::X] < 0 || w[Lourah::geometry::APoint::X]  > width)
 				|| (w[Lourah::geometry::APoint::Y] < 0 || w[Lourah::geometry::APoint::Y] > height)
 		   ) { continue; }
 
+		//std::cout << "w[0]::" << w[0] << "::w[1]::" << w[1] << std::endl;
 		int wP =  (int)(w[Lourah::geometry::APoint::X] + w[Lourah::geometry::APoint::Y]*width);
-		if (zP[wP] == NULL || zP[wP]->p2d[Lourah::geometry::APoint::Z] <= pixel.p3d[Lourah::geometry::APoint::Z]) {
-			zP[wP] = &pixel;
+
+		//std::cout << "   wP::" << wP << std::endl;
+
+		if (zP[wP] == NULL || zP[wP]->p3d[Lourah::geometry::APoint::Z] <= pixel.p3d[Lourah::geometry::APoint::Z]) {
+			zP[wP] = new Lourah::geometry::Pixel(pixel);
+			//std::cout << "zP[" << wP << "]::" << zP[wP]->toString() << std::endl;
 		}
 	}
 }
@@ -71,15 +78,16 @@ Lourah::geometry::Shape& Lourah::geometry::Renderer::translate(Shape &shape, AVe
 void Lourah::geometry::Renderer::draw(Lourah::screen::Screen& screen) {
 	screen.clear();
 	for (int i = 0; i < length; i++) {
+		//if (i==4600) std::cout << "zP[" << i << "]::" << zP[i] << std::endl;
 		if (zP[i] != NULL  && zP[i]->projected) {
-			int x = int(zP[i]->p2d[Lourah::geometry::APoint::X]);
-			int y = int(zP[i]->p2d[Lourah::geometry::APoint::Y]);
-			std::cout << "x::" << x << "::y::" << y << std::endl;
+			int x = int(zP[i]->p2d[Lourah::geometry::APoint::X] + .5);
+			int y = int(zP[i]->p2d[Lourah::geometry::APoint::Y] + .5);
+			//std::cout << "x::" << x << "::y::" << y << std::endl;
 			screen.spotXY(x, y, zP[i]->color);
 			zP[i] = NULL;
 		}
 	}
-	//screen.flush();
+	screen.flush();
 }
 
 

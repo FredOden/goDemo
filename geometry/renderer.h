@@ -15,9 +15,15 @@ namespace Lourah {
 				screen::AColor color;  // RGBA color of the pixel
 				//Pixel() { projected = false; }
 				Pixel(APoint& p, screen::AColor& color) { p3d = p; this->color = color; projected = false; }
+				Pixel(Pixel& pixel) {
+					p3d = pixel.p3d;
+					p2d = pixel.p2d;
+					projected = pixel.projected;
+					color = pixel.color;
+				}
 				char *toString() {
 					static char ret[1000];
-					sprintf(ret, "p3d(%g,%g,%g), color(%d,%d,%d), %s", p3d[0],p3d[1],p3d[2], color.rgba[0], color.rgba[1], color.rgba[2], projected?"True":"False");
+					sprintf(ret, "p3d(%g,%g,%g), p2d(%g,%g), color(%d,%d,%d), %s", p3d[0],p3d[1],p3d[2], p2d[0], p2d[1], color.rgba[0], color.rgba[1], color.rgba[2], projected?"True":"False");
 					return ret;
 				}
 		};

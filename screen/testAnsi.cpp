@@ -15,6 +15,8 @@ int main(int argc, char **argv) {
 
 	ansi.spotXY(10, 10, red);
 	ansi.spotXY(10, 12, cyan);
+	ansi.spotXY(10, 14, red);
+	ansi.spotXY(11, 15, cyan);
 
 	ansi.flush();
 	std::cout << std::endl;
