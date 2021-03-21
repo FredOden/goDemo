@@ -1,5 +1,5 @@
 ROOT=/data/data/com.termux/files/home/goProjects/training/demo
-CPPFLAGS=-I${ROOT}/screen -I${ROOT}/geometry -I${ROOT}
+CPPFLAGS=-O3 -I${ROOT}/screen -I${ROOT}/geometry -I${ROOT}
 .cpp.o:
 	c++ ${CPPFLAGS} -c $<
 

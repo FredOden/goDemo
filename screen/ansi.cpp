@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 Lourah::screen::Ansi::Ansi() {
 	buffer = (char *)malloc(0x100000);
 	spot = "\x1b[1mX";
@@ -21,9 +22,10 @@ void Lourah::screen::Ansi::clear() {
 	pos += strlen(sClear);
 }
 
-void Lourah::screen::Ansi::flush() {
+void Lourah::screen::Ansi::flush(bool bFlush) {
 	printf("%s", buffer);
-	fflush(stdout);
+	if (bFlush) fflush(stdout);
+	pos = 0; // forget to reset to 0 was BIG bug !!!
 }
 
 void Lourah::screen::Ansi::spotXY(int x, int y, Lourah::screen::AColor& color) {

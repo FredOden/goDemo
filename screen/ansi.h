@@ -13,7 +13,7 @@ namespace Lourah {
 				Ansi();
 				~Ansi();
 				void clear();
-				void flush();
+				void flush(bool bFlush = false); // bFlush == true means flush content to stdout
 				void spotXY(int, int, AColor&);
 				void setText(int, int, AColor&, std::string);
 				inline std::string getSpot() { return spot; };

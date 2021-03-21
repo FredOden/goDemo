@@ -14,8 +14,8 @@ namespace Lourah {
 				bool projected; // to check if p3d was projected to avoid recomputation
 				screen::AColor color;  // RGBA color of the pixel
 				//Pixel() { projected = false; }
-				Pixel(APoint& p, screen::AColor& color) { p3d = p; this->color = color; projected = false; }
-				Pixel(Pixel& pixel) {
+				Pixel(const APoint& p, const screen::AColor& color) { p3d = p; this->color = color; projected = false; }
+				Pixel(const Pixel& pixel) {
 					p3d = pixel.p3d;
 					p2d = pixel.p2d;
 					projected = pixel.projected;
@@ -32,17 +32,58 @@ namespace Lourah {
 		class Shape {
 			private:
 				int length = 0;
+				int *count;
 			public:
 				Pixel *pixels;
-				Shape() { length = 0; pixels = NULL; }
-				~Shape() { if (length) free(pixels); }
-				Shape& operator += (Pixel& pixel) {
+				Shape() { length = 0; pixels = NULL; count = (int *)malloc(sizeof(int)); *count = 0; }
+				Shape& operator = (const Shape& shape) {
+				// Copy constructor: shallow copy, it is a copy don't free pixels when deleted
+					(*shape.count)++;
+					if (count == shape.count && pixels == shape.pixels) {
+						//std::cerr << "Shape::SAME COPY::" << shape.pixels << " -> " << pixels << "::length::"  << length << std::endl;
+						(*count)++;
+						return *this;
+					}
+					if ((*count) > 0) {
+						// Tell my twins that I am leaving the team
+						(*count)--;
+					} else {
+						free(pixels);
+						//std::cerr << "Shape delete::THE ULTIMATE FREE::"  << pixels << "::length::" << length << "::count::" << *count << std::endl;
+						pixels = NULL;
+					}
+					length = shape.length;
+					pixels = shape.pixels;
+					count = shape.count;
+					//std::cerr << "Shape::SHALOW COPY::" << shape.pixels << " -> " << pixels << "::length::"  << length << std::endl;
+					return *this;
+				}
+				// Assignment : deep copy, it is not a shallow copy so free pixels when deleted
+				Shape(const Shape& shape) {
+					pixels = (Pixel *)malloc(sizeof(Pixel)*shape.length);
+					length = shape.length;
+					count = (int *)malloc(sizeof(int)); *count = 0;
+					memcpy((void *)pixels, (void *)shape.pixels, sizeof(Pixel)*length);
+					//std::cerr << "Shape::DEEP COPY::"  << shape.pixels << " -> " << pixels << "::length::" << length << std::endl;
+				}
+				~Shape() {
+					if (length) {
+						if ((*count) == 0) {
+							free(pixels);
+							//std::cerr << "Shape delete::FREE::"  << pixels << "::length::" << length << "::count::" << *count << std::endl;
+						} else {
+							(*count)--;
+							//std::cerr << "Shape delete::DEREF::"  << pixels << "::length::" << length << "::count::" << *count << std::endl;
+						}
+					}
+				}
+				Shape& operator += (const Pixel& pixel) {
 					pixels = (Pixel *)((length == 0)?malloc(sizeof(Pixel)):realloc(pixels, sizeof(Pixel)*(length + 1)));
 					pixels[length++] = pixel;
 					return *this;
 				}
-				inline int getLength() { return length; }
-				inline Pixel& operator [] (int i) { return pixels[i]; }
+				inline int getLength() const { return length; }
+				inline Pixel& operator [] (int i) const { return pixels[i]; }
 		};
 
 
@@ -58,7 +99,7 @@ namespace Lourah {
 				void project(Pixel &); // projection according to the renderer class
 
 			public:
-				Renderer(int iWidth, int iHeight, APoint& camera) {
+				Renderer(int iWidth, int iHeight, const APoint& camera) {
 					width = (double)iWidth;
 					height = (double)iHeight;
 					length = (iWidth + 1)*(iHeight + 1);
@@ -71,16 +112,16 @@ namespace Lourah {
 				~Renderer() {
 					free(zP);
 				}
-				void render(Shape &);
+				void render(const Shape &);
 				// Rotate apply rotation through 3 angles
 				// rX rotation around absolute x axis
 				// rY rotation around absolute y axis
 				// rZ rotation around absolute z axis
-				Shape& rotate(Shape& , double rX, double rY, double rZ);
+				Shape rotate(const Shape& , double rX, double rY, double rZ);
 				// Draw draw the full content of zP buffer of the renderer
 				// then clears the content of zP
 				void draw(Lourah::screen::Screen& screen);
-				Shape& translate(Shape&, AVector&); 
+				Shape translate(const Shape&, const AVector&); 
 		};
 
 	}

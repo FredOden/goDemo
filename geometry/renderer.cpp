@@ -1,7 +1,7 @@
 /*
-func Append(shape []*Pixel, p3d *APoint, color *screen.AColor) []*Pixel {
-	p:=&Pixel{p3d:p3d, color:color, projected:false};
-	return append(shape, p);
+   func Append(shape []*Pixel, p3d *APoint, color *screen.AColor) []*Pixel {
+p:=&Pixel{p3d:p3d, color:color, projected:false};
+return append(shape, p);
 }
 */
 #include <iostream>
@@ -15,17 +15,18 @@ void Lourah::geometry::Renderer::project(Pixel& p) {
 	if  (p.projected) {
 		return;
 	}
-	APoint cam = camera;
-	double k = cam[Lourah::geometry::APoint::Z]/(p.p3d[Lourah::geometry::APoint::Z] + cam[Lourah::geometry::APoint::Z]);
-	double x2d = (halfWidth + ((p.p3d[Lourah::geometry::APoint::X] - camera[Lourah::geometry::APoint::X])*k + camera[Lourah::geometry::APoint::X]));
-	double y2d = (halfHeight - ((p.p3d[Lourah::geometry::APoint::Y] - camera[Lourah::geometry::APoint::Y])*k + camera[Lourah::geometry::APoint::Y]));
-	APoint p2d(x2d, y2d, 0);
-	p.p2d = p2d;
+	//APoint cam = camera;
+	double k = camera[Lourah::geometry::APoint::Z]/(p.p3d[Lourah::geometry::APoint::Z] + camera[Lourah::geometry::APoint::Z]);
+	p.p2d = APoint(
+			(halfWidth + ((p.p3d[Lourah::geometry::APoint::X] - camera[Lourah::geometry::APoint::X])*k + camera[Lourah::geometry::APoint::X])),
+			(halfHeight - ((p.p3d[Lourah::geometry::APoint::Y] - camera[Lourah::geometry::APoint::Y])*k + camera[Lourah::geometry::APoint::Y])),
+			0
+			);
 	p.projected = true;
 }
 
 // Render the shape (array of pixels)
-void Lourah::geometry::Renderer::render(Lourah::geometry::Shape& shape) {
+void Lourah::geometry::Renderer::render(const Lourah::geometry::Shape& shape) {
 	for (int i= 0; i < shape.getLength(); i++) {
 		Lourah::geometry::Pixel pixel = shape[i];
 		if (!pixel.projected) {
@@ -55,22 +56,27 @@ void Lourah::geometry::Renderer::render(Lourah::geometry::Shape& shape) {
 // rX rotation around absolute x axis
 // rY rotation around absolute y axis
 // rZ rotation around absolute z axis
-Lourah::geometry::Shape& Lourah::geometry::Renderer::rotate(Shape &shape, double rX, double rY, double rZ) {
+Lourah::geometry::Shape Lourah::geometry::Renderer::rotate(const Shape &shape, double rX, double rY, double rZ) {
 	Lourah::geometry::AMatrix mr(rX, rY, rZ);
 	Lourah::geometry::APoint p;
-	for (int i=0 ; i < shape.getLength(); i++) {
-		p = shape[i].p3d;
-		shape[i].projected = false;
-		shape[i].p3d = mr * p; //shape[i].p3d;
+	//std::cerr << "Call Copy ctor newShape" << std::endl;
+	Lourah::geometry::Shape newShape = Shape(shape);
+	//std::cerr << "Called Copy ctor newShape" << std::endl;
+
+	for (int i=0 ; i < (newShape).getLength(); i++) {
+		p = (newShape)[i].p3d;
+		(newShape)[i].projected = false;
+		(newShape)[i].p3d = mr * p; //shape[i].p3d;
 	}
-	return shape;
+	return (newShape);
 }
 
-Lourah::geometry::Shape& Lourah::geometry::Renderer::translate(Shape &shape, AVector& vector) {
-	for (int i=0; i < shape.getLength(); i++) {
-		shape[i].p3d = shape[i].p3d.translate(vector);
+Lourah::geometry::Shape Lourah::geometry::Renderer::translate(const Shape &shape, const AVector& vector) {
+	Lourah::geometry::Shape newShape(shape);
+	for (int i=0; i < newShape.getLength(); i++) {
+		newShape[i].p3d = newShape[i].p3d.translate(vector);
 	}
-	return shape;
+	return newShape;
 }
 
 // Draw draw the full content of zP buffer of the renderer
@@ -79,15 +85,18 @@ void Lourah::geometry::Renderer::draw(Lourah::screen::Screen& screen) {
 	screen.clear();
 	for (int i = 0; i < length; i++) {
 		//if (i==4600) std::cout << "zP[" << i << "]::" << zP[i] << std::endl;
-		if (zP[i] != NULL  && zP[i]->projected) {
-			int x = int(zP[i]->p2d[Lourah::geometry::APoint::X] + .5);
-			int y = int(zP[i]->p2d[Lourah::geometry::APoint::Y] + .5);
-			//std::cout << "x::" << x << "::y::" << y << std::endl;
-			screen.spotXY(x, y, zP[i]->color);
+		if (zP[i] != NULL) {
+			
+			if (zP[i]->projected) {
+				int x = int(zP[i]->p2d[Lourah::geometry::APoint::X] + .5);
+				int y = int(zP[i]->p2d[Lourah::geometry::APoint::Y] + .5);
+				//std::cout << "x::" << x << "::y::" << y << std::endl;
+				screen.spotXY(x, y, zP[i]->color);
+			}
+			
 			zP[i] = NULL;
 		}
 	}
-	screen.flush();
+	screen.flush(false);
 }
-
 
